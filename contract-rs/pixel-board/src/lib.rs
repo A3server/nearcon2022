@@ -118,7 +118,11 @@ impl Place {
 
     pub fn select_farming_preference(&mut self, berry: Berry) {
         let mut account = self.get_mut_account(env::predecessor_account_id());
-        account.farming_preference = berry;
+        account.farming_preference = if ms_time() < self.get_free_drawing_timestamp() {
+            berry
+        } else {
+            Berry::Avocado
+        };
         self.save_account(account);
     }
 
@@ -137,6 +141,8 @@ impl Place {
         if ms_time() < self.get_free_drawing_timestamp() {
             let cost = account.charge(Berry::Avocado, new_pixels);
             self.burned_balances[Berry::Avocado as usize] += cost;
+        } else {
+            account.farming_preference = Berry::Avocado;
         }
 
         let mut old_owners = self.board.set_pixels(account.account_index, &pixels);
