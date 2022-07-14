@@ -67,6 +67,15 @@ pub struct Place {
     pub next_vault_id: VaultId,
 }
 
+#[derive(Serialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Stats {
+    pub num_accounts: u32,
+    pub bought_balances: Vec<U128>,
+    pub burned_balances: Vec<U128>,
+    pub farmed_balances: Vec<U128>,
+}
+
 impl Default for Place {
     fn default() -> Self {
         panic!("Fun token should be initialized before usage")
@@ -182,6 +191,15 @@ impl Place {
         let liquid_balance = account_balance - locked_for_storage;
         let reward = liquid_balance / PORTION_OF_REWARDS;
         reward.into()
+    }
+
+    pub fn stats(self) ->Stats {
+        Stats {
+            num_accounts: self.num_accounts,
+            bought_balances: self.bought_balances.into_iter().map(U128).collect(),
+            burned_balances: self.burned_balances.into_iter().map(U128).collect(),
+            farmed_balances: self.farmed_balances.into_iter().map(U128).collect()
+        }
     }
 }
 
