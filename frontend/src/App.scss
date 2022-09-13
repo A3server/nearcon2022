@@ -1,13 +1,57 @@
 * {
   box-sizing: border-box;
 }
+
+
+@font-face {
+  font-family: 'ManRope Medium';
+  src: url("./assets/Manrope-Medium.ttf");
+}
+
+@font-face {
+  font-family: 'ManRope Regular';
+  src: url("./assets/Manrope-Regular.ttf");
+}
+
+@font-face {
+  font-family: 'ManRope SemiBold';
+  src: url("./assets/Manrope-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: 'ManRope Bold';
+  src: url("./assets/Manrope-Bold.ttf");
+}
+
+@font-face {
+  font-family: 'ManRope ExtraBold';
+  src: url("./assets/Manrope-ExtraBold.ttf");
+}
+
+@font-face {
+  font-family: 'ManRope ExtraLight';
+  src: url("./assets/Manrope-ExtraLight.ttf");
+}
+
+body {
+  margin: 0;
+	width: 100%;
+	height: 100vh;
+	font-family: "ManRope Medium","Exo", sans-serif;
+	color: #fff;
+	background: linear-gradient(116.82deg, rgba(174, 89, 30, 0.9) 0%, rgba(5, 52, 173, 0.55) 100%);
+	/* background-size: 400% 400%;
+	animation: gradientBG 15s ease infinite; */
+}
+
 h2 {
   margin: 16px 0;
   display: inline-block;
 }
 
 .balances {
-  font-family: "Lucida Console",Monaco,monospace;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
 .font-weight-bold {
@@ -85,17 +129,99 @@ h2 {
   height: 100%;
 }
 
+.rect {
+  background-color: #F6F8FF;
+  border-radius: 25px;
+}
+
+.bigrect {
+  width: 60%;
+  margin-left: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+
+}
+
+.smallrects {
+  width: 100%;
+  padding: 30px;
+  &:first-child {
+    margin-bottom: 10px;
+  }
+  &:last-child {
+    margin-top: 10px;
+  }
+}
 
 .header {
   padding: 16px 16px 0px 16px;
+  display: flex;
+  flex-direction: row-reverse;
 }
 
 .container {
   padding: 0px 16px;
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
+.wallet-adapter-button {
+  background-color: #383a3f;
+
+  --background: #F6F8FF;
+  --backgroudnghover: #f6f8ff38;
+  --colorwalletadapter: #1E2235;
+  --shadow: #00093d38;
+  --z-before: -6;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  border: 0;
+  background: none;
+  padding: 9px 20px 9px 20px;
+  line-height: 20px;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #A463B0;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--transform-duration, .4s);
+  will-change: transform;
+  transform-style: preserve-3d;
+  transform: perspective(440px) rotateX(calc(var(--rx, 0) * 1deg)) rotateY(calc(var(--ry, 0) * 1deg)) translateZ(0);
+  &:hover {
+    //mouse pointer
+    cursor: pointer;
+  }
+}
+
+.wallet-adapter-button:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 30px;
+  transform: translateZ(calc(var(--z-before) * 1px));
+  background: var(--background);
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+
+.nearlogo {
+  background-position: center 1em;
+  background-repeat: no-repeat;
+  background-size: auto 1.5em;
+  text-align: center;
+  width: 1.7rem;
+}
 .react-switch {
   vertical-align: middle;
 }
@@ -140,20 +266,18 @@ h2 {
   display: flex;
   justify-content: center;
   width: 100%;
-  > div:not(:first-child) {
-    padding-left: 16px;
-  }
 }
 
 @mixin block {
   width: 100%;
   max-width: 600px;
-  margin-bottom: 16px;
+  margin-bottom: 50px;
 }
 
 .pixel-board {
   @include block;
   border: 1px solid #ddd;
+
   &.watch-mode {
     transition: 3s;
     position: fixed;
@@ -186,6 +310,12 @@ h2 {
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.float-left {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .color-picker {
@@ -240,6 +370,13 @@ h2 {
   }
 }
 
+.col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40%;
+}
 
 /********************************
 Layout For Tablet / Phone
@@ -253,12 +390,15 @@ Layout For Tablet / Phone
       padding-left: 0 !important;
     }
   }
+
+  
 }
 
 @media (max-width: 600px) {
   .pixel-board {
     width: 100vw;
     margin-left: -16px;
+    
   }
   h2 {
     text-align: left;
@@ -288,6 +428,6 @@ Layout For Tablet / Phone
     background: #000;
   }
   &.wait {
-    color: #999999;
+    color: #ffffff;
   }
 }

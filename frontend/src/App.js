@@ -6,14 +6,16 @@ import * as nearAPI from "near-api-js";
 import { AlphaPicker, HuePicker, GithubPicker } from "react-color";
 import { Weapons } from "./Weapons";
 import Timer from "react-compound-timer";
-import {intToColor, intToColorWithAlpha, rgbaToInt,generateGamma,  imgColorToInt, int2hsv, transparentColor, decodeLine, BoardHeight, BoardWidth, NumLinesPerFetch, ExpectedLineLength, CellHeight, CellWidth, MaxNumColors, BatchOfPixels, BatchTimeout, RefreshBoardTimeout, MaxWorkTime, OneDayMs} from "./util/utils";
+import { intToColor, intToColorWithAlpha, rgbaToInt, generateGamma, imgColorToInt, int2hsv, transparentColor, decodeLine, BoardHeight, BoardWidth, NumLinesPerFetch, ExpectedLineLength, CellHeight, CellWidth, MaxNumColors, BatchOfPixels, BatchTimeout, RefreshBoardTimeout, MaxWorkTime } from "./util/utils";
+import MainLogo from "./assets/MainLogo";
+import Spinner from "./assets/Spinner";
 
 const PixelPrice = new BN("10000000000000000000000");
 const IsMainnet = window.location.hostname === "berryclub.io";
 const TestNearConfig = {
   networkId: "testnet",
   nodeUrl: "https://rpc.testnet.near.org",
-  contractName: "dev-1663027559455-27779960316569",
+  contractName: "dev-1663075021424-18509228924130",
   walletUrl: "https://wallet.testnet.near.org",
 };
 const MainNearConfig = {
@@ -76,8 +78,7 @@ class App extends React.Component {
     const timeMs = new Date().getTime();
     const eventEndEstimated =
       timeMs -
-      ((timeMs - new Date("2022-09-14")));
-
+      ((timeMs - new Date("2022-09-14 10:00:00 UTC")));
     this.state = {
       connected: false,
       signedIn: false,
@@ -126,6 +127,7 @@ class App extends React.Component {
           eventEndTime: this.eventEndTime,
         },
         () => {
+          console.log(this.state.eventEndTime);
           if (window.location.hash.indexOf("watch") >= 0) {
             setTimeout(() => this.enableWatchMode(), 500);
           }
@@ -135,6 +137,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    console.log(this.state.endtime)
     const canvas = this.canvasRef.current;
     this._context = canvas.getContext("2d");
 
@@ -375,12 +378,12 @@ class App extends React.Component {
     if (!this.state.signedIn || !this._lines || !this._lines[cell.y]) {
       return;
     }
-    
-    //const balance = this.state.account ? this.state.account.avocadoBalance : 0;
+
+    const balance = this.state.account ? this.state.account.avocadoBalance : 0;
 
     if (
-      !this._isEventOver() /* &&
-      balance - this.state.pendingPixels < this.state.avocadoNeeded */
+      !this._isEventOver() &&
+      balance - this.state.pendingPixels < this.state.avocadoNeeded
     ) {
       return;
     }
@@ -462,8 +465,8 @@ class App extends React.Component {
       account = {
         accountId,
         accountIndex: -1,
-        /* avocadoBalance: 25.0,
-        bananaBalance: 0.0, */
+        avocadoBalance: 25.0,
+        //bananaBalance: 0.0,
         numPixels: 0,
         farmingPreference: Berry.Avocado,
       };
@@ -471,19 +474,19 @@ class App extends React.Component {
       account = {
         accountId: account.account_id,
         accountIndex: account.account_index,
-        /* avocadoBalance: parseFloat(account.avocado_balance) / this._pixelCost,
-        bananaBalance: parseFloat(account.banana_balance) / this._pixelCost, */
+        avocadoBalance: parseFloat(account.avocado_balance) / this._pixelCost,
+        //bananaBalance: parseFloat(account.banana_balance) / this._pixelCost,
         numPixels: account.num_pixels,
         //farmingPreference: account.farming_preference,
       };
     }
     account.startTime = new Date().getTime();
-    /* account.avocadoPixels =
+    account.avocadoPixels =
       account.farmingPreference === Berry.Avocado ? account.numPixels + 1 : 0;
-    account.bananaPixels =
-      account.farmingPreference === Berry.Banana ? account.numPixels : 0;
+    /* account.bananaPixels =
+      account.farmingPreference === Berry.Banana ? account.numPixels : 0; */
     account.avocadoRewardPerMs = account.avocadoPixels / (24 * 60 * 60 * 1000);
-    account.bananaRewardPerMs = account.bananaPixels / (24 * 60 * 60 * 1000); */
+    //account.bananaRewardPerMs = account.bananaPixels / (24 * 60 * 60 * 1000);
     return account;
   }
 
@@ -520,9 +523,9 @@ class App extends React.Component {
       const t = new Date().getTime() - account.startTime;
       this.setState({
         account: Object.assign({}, account, {
-          /* avocadoBalance:
+          avocadoBalance:
             account.avocadoBalance + t * account.avocadoRewardPerMs,
-          bananaBalance: account.bananaBalance + t * account.bananaRewardPerMs, */
+          //bananaBalance: account.bananaBalance + t * account.bananaRewardPerMs,
         }),
         pendingPixels: this._pendingPixels.length + this._queue.length,
       });
@@ -564,8 +567,7 @@ class App extends React.Component {
     );
     this._pixelCost = parseFloat(await this._contract.get_pixel_cost());
     const endtime = await this._contract.get_event_finish();
-    //convert epox to Date object
-    this.eventEndTime = new Date(endtime/1000000) ;
+    this.eventEndTime = new Date(endtime / 1000000);
     if (this._accountId) {
       await this.refreshAccountStats();
     }
@@ -960,75 +962,325 @@ class App extends React.Component {
   render() {
     const watchClass = this.state.watchMode ? " hidden" : "";
     const isEventOff = this._isEventOver();
-    const freeDrawing = (
+    const timeLeft = (
       <div
-        className={`free-drawing ${
-          isEventOff ? "free" : "wait"
-        }${watchClass}`}
+        className={`free-drawing ${isEventOff ? "free" : "wait"
+          }${watchClass} `}
+        style={{ fontSize: "1.8rem", color:"#000000", marginTop:"25px"}}
       >
         {isEventOff
           ? "Near Playground is over! Thanks for playing!"
           : <>
-          Time until the end off the event:
-          <Timer
-          initialTime={
-               this.state.eventEndTime - new Date()
-          }
-          direction="backward"
-          timeToUpdate={100}
-          lastUnit="d"
-          checkpoints={[
-            {
-              time: 0,
-            },
-          ]}
-        >
-          {() => (
-            <React.Fragment>
-              <Timer.Days
-                formatValue={(v) => (v > 1 ? `${v} days ` : v ? `1 day ` : "")}
-              />
-              <Timer.Hours />:
-              <Timer.Minutes formatValue={(v) => `${v}`.padStart(2, "0")} />:
-              <Timer.Seconds formatValue={(v) => `${v}`.padStart(2, "0")} />
-            </React.Fragment>
-          )}
-        </Timer>
-        </>}
-        
+            Time left:
+            <Timer
+              initialTime={
+                this.state.eventEndTime - new Date()
+              }
+              direction="backward"
+              timeToUpdate={100}
+              lastUnit="d"
+              checkpoints={[
+                {
+                  time: 0,
+                },
+              ]}
+            >
+              {() => (
+                <React.Fragment>
+                  <Timer.Days
+                    formatValue={(v) => (v > 1 ? `${v} days ` : v ? `1 day ` : "")}
+                  />
+                  <Timer.Hours />H{" "}
+                  <Timer.Minutes formatValue={(v) => `${v}`.padStart(2, "0")} />M{" "}
+                  <Timer.Seconds formatValue={(v) => `${v}`.padStart(2, "0")} />S
+                </React.Fragment>
+              )}
+            </Timer>
+          </>}
+
       </div>
     );
 
     const content = !this.state.connected ? (
-      <div>
-        Connecting...{" "}
-        <span
-          className="spinner-grow spinner-grow-sm"
-          role="status"
-          aria-hidden="true"
-        />
-      </div>
+      <button className='wallet-adapter-button btnhover' onClick={() => this.requestSignIn()}>
+        {/* <Spinner/> */}
+        Connecting...
+      </button>
     ) : this.state.signedIn ? (
-      <div>
-        <div className={`float-right${watchClass}`}>
-          <button
-            className="btn btn-outline-secondary"
-            onClick={() => this.logOut()}
-          >
+      
+      <div style={{ marginBottom: "10px", display: "flex", flexDirection: "column", alignItems: "end" }}>
+        <div style={{ marginLeft: "0" }}>
+        <button className='wallet-adapter-button btnhover'  onClick={() => this.logOut()}>
             Log out ({this.state.accountId})
           </button>
         </div>
-        {freeDrawing}
-        <div className={`your-balance${watchClass}`}>
-          Balance:{" "}
+        
+      </div>
+    ) : (
+      <div style={{ marginBottom: "10px", display: "flex", flexDirection: "column", alignItems: "end" }}>
+        <div style={{ marginLeft: "0" }}>
+          <button className='wallet-adapter-button btnhover' onClick={() => this.requestSignIn()}>CONNECT NEAR WALLET</button>
+        </div>
+      </div>
+    );
+    const weapons = this.state.weaponsOn ? (
+      <div>
+        <Weapons
+          account={this.state.account}
+          isEventOff={isEventOff}
+          renderIt={(img, avocadoNeeded) => this.renderImg(img, avocadoNeeded)}
+          enableWatchMode={() => this.enableWatchMode()}
+        />
+      </div>
+    ) : (
+      ""
+    );
+    return (
+      <div>
+        <div className={`header`}>
+          {/* <a className="btn btn-outline-none" href="https://farm.berryclub.io">
+            Berry Farm cucumber
+          </a>
+          <a
+            className="btn btn-outline-none"
+            href="https://app.ref.finance/#wrap.near|berryclub.ek.near"
+          >
+            REF Finance banana
+          </a>
+          <a className="btn btn-outline-none" href="https://berry.cards">
+            [BETA] Berry Cards pepper
+          </a> */}
+          {content}
+        </div>
+        <div className="container">
+          <MainLogo />
+          <div style={{ maxWidth: "900px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <span style={{ textAlign: "center", marginTop: "20px", fontSize: "1.2rem" }}>
+              Back in the day, when Near was only in its beginnings, one of the only things you could do on-chain was to play <a href="https://berryclub.io/">Berry Club</a>.
+              Place your pixel and leave your mark on the Near blockchain for ever.
+            </span>
+            <span>
+              <p style={{ marginTop: "20px", fontSize: "1.2rem" }}>But be careful, you only got the rest of the event!</p>
+             {/*  <div
+            className={this.state.alpha >= 0.75 ? "display-warning" : "hidden"}
+            style={{ margin: "10px", fontSize: "1.2rem" }}
+          >
+            <span role="img" aria-label="warning">
+              ⚠️
+            </span>
+            ️ Please! Don't destroy art!
+            <span role="img" aria-label="pray">
+              🙏
+            </span>
+            ️
+          </div> */}
+            </span>
+          </div>
+          <div className="row">
+            <div className="col">
+              <div className="rect smallrects">
+              <div className={`your-balance${watchClass}`} style={{color:"#4D4D4D"}}>
+        </div>
+        
+        <div className={`color-picker${watchClass}`}>
+          <HuePicker
+            color={this.state.pickerColor}
+            width="100%"
+            onChange={(c) => this.hueColorChange(c)}
+          />
+          <AlphaPicker
+            color={this.state.pickerColor}
+            width="100%"
+            onChange={(c) => this.alphaColorChange(c)}
+          />
+          <GithubPicker
+            className="circle-picker"
+            colors={this.state.gammaColors}
+            color={this.state.pickerColor}
+            triangle="hide"
+            width="100%"
+            onChangeComplete={(c) => this.changeColor(c)}
+          />
+          <GithubPicker
+            className="circle-picker"
+            colors={this.state.colors}
+            color={this.state.pickerColor}
+            triangle="hide"
+            width="100%"
+            onChangeComplete={(c) => this.hueColorChange(c)}
+          />
+        </div>
+              </div>
+              <div className="rect smallrects balances" style={{color: "#4D4D4D"}}>
           <Balance
             account={this.state.account}
             pendingPixels={this.state.pendingPixels}
             isEventOff={isEventOff}
             detailed={true}
           />
+                <BuyButtons watchClass={watchClass} />
+              </div>
+              <div className="rect smallrects" style={{display:"flex", flexDirection:"column"}}>
+                <span style={{color:"#4D4D4D"}}>Canvas' Info</span>
+                <div className={`leaderboard`}> {/*${watchClass}*/}
+                  <div>
+                    <Leaderboard
+                      owners={this.state.owners}
+                      accounts={this.state.accounts}
+                      setHover={(accountIndex, v) => this.setHover(accountIndex, v)}
+                      selectedOwnerIndex={this.state.selectedOwnerIndex}
+                      highlightedAccountIndex={this.state.highlightedAccountIndex}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="rect bigrect">
+            {timeLeft}
+              <canvas
+                ref={this.canvasRef}
+                width={550}
+                height={550}
+                className={
+                  this.state.boardLoaded
+                    ? `pixel-board${this.state.watchMode ? " watch-mode" : ""
+                    }`
+                    : "pixel-board c-animated-background"
+                }
+              />
+            </div>
+          </div>
+
+
+      </div>
+        <div className={`padded`}>
+          {/* {this.state.signedIn ? (
+            <div>
+              <iframe
+                title="irc"
+                className="irc"
+                frameBorder="0"
+                src={`https://kiwiirc.com/client/irc.kiwiirc.com/?nick=${this.state.ircAccountId}#berryclub`}
+              />
+            </div>
+          ) : (
+            ""
+          )} */}
         </div>
-        <div className={`buttons${watchClass}`}>
+    {/*<div className={`padded${watchClass}`}>*/ }
+    {/*  <div className="video-container">*/ }
+    {/*    <iframe*/ }
+    {/*      title="youtube3"*/ }
+    {/*      className="youtube"*/ }
+    {/*      src="https://www.youtube.com/embed/wfTa-Kgw2DM"*/ }
+    {/*      frameBorder="0"*/ }
+    {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/ }
+    {/*      allowFullScreen*/ }
+    {/*    />*/ }
+    {/*  </div>*/ }
+    {/*</div>*/ }
+    {/*<div className={`padded${watchClass}`}>*/ }
+    {/*  <div className="video-container">*/ }
+    {/*    <iframe*/ }
+    {/*      title="youtube2"*/ }
+    {/*      className="youtube"*/ }
+    {/*      src="https://www.youtube.com/embed/PYF6RWd7ZgI"*/ }
+    {/*      frameBorder="0"*/ }
+    {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/ }
+    {/*      allowFullScreen*/ }
+    {/*    />*/ }
+    {/*  </div>*/ }
+    {/*</div>*/ }
+    {/*<div className={`padded${watchClass}`}>*/ }
+    {/*  <div className="video-container">*/ }
+    {/*    <iframe*/ }
+    {/*      title="youtube"*/ }
+    {/*      className="youtube"*/ }
+    {/*      src="https://www.youtube.com/embed/lMSWhCwstLo"*/ }
+    {/*      frameBorder="0"*/ }
+    {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/ }
+    {/*      allowFullScreen*/ }
+    {/*    />*/ }
+    {/*  </div>*/ }
+    {/*</div>*/ }
+    { weapons }
+       
+      </div >
+    );
+  }
+}
+
+const Balance = (props) => {
+  const account = props.account;
+  if (!account) {
+    return "";
+  }
+  const fraction = props.detailed ? 3 : 1;
+  const avacadoBalance =
+    account.avocadoBalance -
+    (props.isEventOff ? 0 : props.pendingPixels || 0);
+  /* const avocadoFarm =
+    account.avocadoPixels > 0 ? (
+      <span>
+        {"(+"}
+        <span className="font-weight-bold">{account.avocadoPixels}</span>
+        INK
+        {"/day)"}
+      </span>
+    ) : (
+      ""
+    );
+  const bananaFarm =
+    account.bananaPixels > 0 ? (
+      <span>
+        {"(+"}
+        <span className="font-weight-bold">{account.bananaPixels}</span>
+        banana
+        {"/day)"}
+      </span>
+    ) : (
+      ""
+    ); */
+  return (
+    <span className="font-small">
+      <span className="font-weight-bold">
+        {avacadoBalance ? avacadoBalance.toFixed(fraction) : 0} INK 
+      </span>
+      {/* <span className="font-weight-bold">
+        {account.bananaBalance ? account.bananaBalance.toFixed(fraction) : 0}
+      </span>
+      {avocadoFarm}
+      {bananaFarm} */}
+      {props.pendingPixels ? <span> ({props.pendingPixels} pending)</span> : ""}
+    </span>
+  );
+};
+
+const Leaderboard = (props) => {
+  const owners = props.owners.map((owner) => {
+    if (owner.accountIndex in props.accounts) {
+      owner.account = props.accounts[owner.accountIndex];
+    }
+    return (
+      <Owner
+        key={owner.accountIndex}
+        {...owner}
+        isSelected={owner.accountIndex === props.selectedOwnerIndex}
+        setHover={(v) => props.setHover(owner.accountIndex, v)}
+        isHighlighted={owner.accountIndex === props.highlightedAccountIndex}
+      />
+    );
+  });
+  return (
+    <table className="table table-hover table-sm">
+      <tbody>{owners}</tbody>
+    </table>
+  );
+};
+
+const BuyButtons = (props) => {
+  return (
+    <div className={`buttons${props.watchClass}`} >
           <button
             className="btn btn-primary"
             onClick={() => this.buyTokens(10)}
@@ -1058,258 +1310,8 @@ class App extends React.Component {
             for <span className="font-weight-bold">Ⓝ5</span>
           </button>
         </div>
-        <div className={`color-picker${watchClass}`}>
-          <HuePicker
-            color={this.state.pickerColor}
-            width="100%"
-            onChange={(c) => this.hueColorChange(c)}
-          />
-          <AlphaPicker
-            color={this.state.pickerColor}
-            width="100%"
-            onChange={(c) => this.alphaColorChange(c)}
-          />
-          <div
-            className={this.state.alpha >= 0.75 ? "display-warning" : "hidden"}
-          >
-            <span role="img" aria-label="warning">
-              ⚠️
-            </span>
-            ️ Please! Don't destroy art! If you just want to farm banana, just
-            draw with low opacity.
-            <span role="img" aria-label="pray">
-              🙏
-            </span>
-            ️
-          </div>
-          <GithubPicker
-            className="circle-picker"
-            colors={this.state.gammaColors}
-            color={this.state.pickerColor}
-            triangle="hide"
-            width="100%"
-            onChangeComplete={(c) => this.changeColor(c)}
-          />
-          <GithubPicker
-            className="circle-picker"
-            colors={this.state.colors}
-            color={this.state.pickerColor}
-            triangle="hide"
-            width="100%"
-            onChangeComplete={(c) => this.hueColorChange(c)}
-          />
-        </div>
-      </div>
-    ) : (
-      <div style={{ marginBottom: "10px" }}>
-        {freeDrawing}
-        <div>
-          <button
-            className="btn btn-primary"
-            onClick={() => this.requestSignIn()}
-          >
-            Log in with NEAR Wallet
-          </button>
-        </div>
-      </div>
-    );
-    const weapons = this.state.weaponsOn ? (
-      <div>
-        <Weapons
-          account={this.state.account}
-          isEventOff={isEventOff}
-          renderIt={(img, avocadoNeeded) => this.renderImg(img, avocadoNeeded)}
-          enableWatchMode={() => this.enableWatchMode()}
-        />
-      </div>
-    ) : (
-      ""
-    );
-    return (
-      <div>
-        <div className={`header${watchClass}`}>
-          <h2>
-            Avocado Berry Club banana
-          </h2>{" "}
-          <a className="btn btn-outline-none" href="https://farm.berryclub.io">
-            Berry Farm cucumber
-          </a>
-          <a
-            className="btn btn-outline-none"
-            href="https://app.ref.finance/#wrap.near|berryclub.ek.near"
-          >
-            REF Finance banana
-          </a>
-          <a className="btn btn-outline-none" href="https://berry.cards">
-            [BETA] Berry Cards pepper
-          </a>
-          {content}
-        </div>
-        <div className="container">
-          <div className="row">
-            <div>
-              <div>
-                <canvas
-                  ref={this.canvasRef}
-                  width={600}
-                  height={600}
-                  className={
-                    this.state.boardLoaded
-                      ? `pixel-board${
-                          this.state.watchMode ? " watch-mode" : ""
-                        }`
-                      : "pixel-board c-animated-background"
-                  }
-                />
-              </div>
-            </div>
-            <div className={`leaderboard${watchClass}`}>
-              <div>
-                <Leaderboard
-                  owners={this.state.owners}
-                  accounts={this.state.accounts}
-                  setHover={(accountIndex, v) => this.setHover(accountIndex, v)}
-                  selectedOwnerIndex={this.state.selectedOwnerIndex}
-                  highlightedAccountIndex={this.state.highlightedAccountIndex}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        {/*
-        <div className={`padded${watchClass}`}>
-          {this.state.signedIn ? (
-            <div>
-              <iframe
-                title="irc"
-                className="irc"
-                frameBorder="0"
-                src={`https://kiwiirc.com/client/irc.kiwiirc.com/?nick=${this.state.ircAccountId}#berryclub`}
-              />
-            </div>
-          ) : (
-            ""
-          )}
-        </div>
-         */}
-        {/*<div className={`padded${watchClass}`}>*/}
-        {/*  <div className="video-container">*/}
-        {/*    <iframe*/}
-        {/*      title="youtube3"*/}
-        {/*      className="youtube"*/}
-        {/*      src="https://www.youtube.com/embed/wfTa-Kgw2DM"*/}
-        {/*      frameBorder="0"*/}
-        {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/}
-        {/*      allowFullScreen*/}
-        {/*    />*/}
-        {/*  </div>*/}
-        {/*</div>*/}
-        {/*<div className={`padded${watchClass}`}>*/}
-        {/*  <div className="video-container">*/}
-        {/*    <iframe*/}
-        {/*      title="youtube2"*/}
-        {/*      className="youtube"*/}
-        {/*      src="https://www.youtube.com/embed/PYF6RWd7ZgI"*/}
-        {/*      frameBorder="0"*/}
-        {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/}
-        {/*      allowFullScreen*/}
-        {/*    />*/}
-        {/*  </div>*/}
-        {/*</div>*/}
-        {/*<div className={`padded${watchClass}`}>*/}
-        {/*  <div className="video-container">*/}
-        {/*    <iframe*/}
-        {/*      title="youtube"*/}
-        {/*      className="youtube"*/}
-        {/*      src="https://www.youtube.com/embed/lMSWhCwstLo"*/}
-        {/*      frameBorder="0"*/}
-        {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/}
-        {/*      allowFullScreen*/}
-        {/*    />*/}
-        {/*  </div>*/}
-        {/*</div>*/}
-        {weapons}
-        <a
-          className={`github-fork-ribbon right-bottom fixed${watchClass}`}
-          href="https://github.com/evgenykuzyakov/berryclub"
-          data-ribbon="Fork me on GitHub"
-          title="Fork me on GitHub"
-        >
-          Fork me on GitHub
-        </a>
-      </div>
-    );
-  }
+  )
 }
-
-const Balance = (props) => {
-  const account = props.account;
-  if (!account) {
-    return "";
-  }
-  const fraction = props.detailed ? 3 : 1;
-  const avacadoBalance =
-    account.avocadoBalance -
-    (props.isEventOff ? 0 : props.pendingPixels || 0);
-  const avocadoFarm =
-    account.avocadoPixels > 0 ? (
-      <span>
-        {"(+"}
-        <span className="font-weight-bold">{account.avocadoPixels}</span>
-        Avocado
-        {"/day)"}
-      </span>
-    ) : (
-      ""
-    );
-  const bananaFarm =
-    account.bananaPixels > 0 ? (
-      <span>
-        {"(+"}
-        <span className="font-weight-bold">{account.bananaPixels}</span>
-        banana
-        {"/day)"}
-      </span>
-    ) : (
-      ""
-    );
-  return (
-    <span className="balances font-small">
-      <span className="font-weight-bold">
-        {avacadoBalance ? avacadoBalance.toFixed(fraction): 0}
-      </span>
-      Avocado{" "}
-      <span className="font-weight-bold">
-        {account.bananaBalance ? account.bananaBalance.toFixed(fraction) : 0}
-      </span>
-      {avocadoFarm}
-      {bananaFarm}
-      {props.pendingPixels ? <span> ({props.pendingPixels} pending)</span> : ""}
-    </span>
-  );
-};
-
-const Leaderboard = (props) => {
-  const owners = props.owners.map((owner) => {
-    if (owner.accountIndex in props.accounts) {
-      owner.account = props.accounts[owner.accountIndex];
-    }
-    return (
-      <Owner
-        key={owner.accountIndex}
-        {...owner}
-        isSelected={owner.accountIndex === props.selectedOwnerIndex}
-        setHover={(v) => props.setHover(owner.accountIndex, v)}
-        isHighlighted={owner.accountIndex === props.highlightedAccountIndex}
-      />
-    );
-  });
-  return (
-    <table className="table table-hover table-sm">
-      <tbody>{owners}</tbody>
-    </table>
-  );
-};
 
 const Owner = (props) => {
   const account = props.account;

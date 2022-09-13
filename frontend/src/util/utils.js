@@ -70,6 +70,6 @@ export const MaxNumColors = 31;
 export const BatchOfPixels = 100;
 // 500 ms
 export const BatchTimeout = 500;
-export const RefreshBoardTimeout = 600; //changed from 1000
+export const RefreshBoardTimeout = 1000; //changed from 1000
 export const MaxWorkTime = 10 * 60 * 1000;
-export const OneDayMs = 24 * 60 * 60 * 1000;
+// export const OneDayMs = 24 * 60 * 60 * 1000;
