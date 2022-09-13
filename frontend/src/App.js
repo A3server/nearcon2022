@@ -8,7 +8,8 @@ import { Weapons } from "./Weapons";
 import Timer from "react-compound-timer";
 import { intToColor, intToColorWithAlpha, rgbaToInt, generateGamma, imgColorToInt, int2hsv, transparentColor, decodeLine, BoardHeight, BoardWidth, NumLinesPerFetch, ExpectedLineLength, CellHeight, CellWidth, MaxNumColors, BatchOfPixels, BatchTimeout, RefreshBoardTimeout, MaxWorkTime } from "./util/utils";
 import MainLogo from "./assets/MainLogo";
-import Spinner from "./assets/Spinner";
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
 
 const PixelPrice = new BN("10000000000000000000000");
 const IsMainnet = window.location.hostname === "berryclub.io";
@@ -966,7 +967,7 @@ class App extends React.Component {
       <div
         className={`free-drawing ${isEventOff ? "free" : "wait"
           }${watchClass} `}
-        style={{ fontSize: "1.8rem", color:"#000000", marginTop:"25px"}}
+        style={{ fontSize: "1.8rem", color: "#000000", marginTop: "25px" }}
       >
         {isEventOff
           ? "Near Playground is over! Thanks for playing!"
@@ -1007,14 +1008,14 @@ class App extends React.Component {
         Connecting...
       </button>
     ) : this.state.signedIn ? (
-      
+
       <div style={{ marginBottom: "10px", display: "flex", flexDirection: "column", alignItems: "end" }}>
         <div style={{ marginLeft: "0" }}>
-        <button className='wallet-adapter-button btnhover'  onClick={() => this.logOut()}>
+          <button className='wallet-adapter-button btnhover' onClick={() => this.logOut()}>
             Log out ({this.state.accountId})
           </button>
         </div>
-        
+
       </div>
     ) : (
       <div style={{ marginBottom: "10px", display: "flex", flexDirection: "column", alignItems: "end" }}>
@@ -1061,7 +1062,7 @@ class App extends React.Component {
             </span>
             <span>
               <p style={{ marginTop: "20px", fontSize: "1.2rem" }}>But be careful, you only got the rest of the event!</p>
-             {/*  <div
+              {/*  <div
             className={this.state.alpha >= 0.75 ? "display-warning" : "hidden"}
             style={{ margin: "10px", fontSize: "1.2rem" }}
           >
@@ -1079,49 +1080,61 @@ class App extends React.Component {
           <div className="row">
             <div className="col">
               <div className="rect smallrects">
-              <div className={`your-balance${watchClass}`} style={{color:"#4D4D4D"}}>
-        </div>
-        
-        <div className={`color-picker${watchClass}`}>
-          <HuePicker
-            color={this.state.pickerColor}
-            width="100%"
-            onChange={(c) => this.hueColorChange(c)}
-          />
-          <AlphaPicker
-            color={this.state.pickerColor}
-            width="100%"
-            onChange={(c) => this.alphaColorChange(c)}
-          />
-          <GithubPicker
-            className="circle-picker"
-            colors={this.state.gammaColors}
-            color={this.state.pickerColor}
-            triangle="hide"
-            width="100%"
-            onChangeComplete={(c) => this.changeColor(c)}
-          />
-          <GithubPicker
-            className="circle-picker"
-            colors={this.state.colors}
-            color={this.state.pickerColor}
-            triangle="hide"
-            width="100%"
-            onChangeComplete={(c) => this.hueColorChange(c)}
-          />
-        </div>
+              { this.state.signedIn ? (
+                  <div className={`color-picker`}>
+                  <HuePicker
+                    color={this.state.pickerColor}
+                    width="100%"
+                    onChange={(c) => this.hueColorChange(c)}
+                  />
+                  <AlphaPicker
+                    color={this.state.pickerColor}
+                    width="100%"
+                    onChange={(c) => this.alphaColorChange(c)}
+                  />
+                  <GithubPicker
+                    className="circle-picker"
+                    colors={this.state.gammaColors}
+                    color={this.state.pickerColor}
+                    triangle="hide"
+                    width="100%"
+                    onChangeComplete={(c) => this.changeColor(c)}
+                  />
+                  <GithubPicker
+                    className="circle-picker"
+                    colors={this.state.colors}
+                    color={this.state.pickerColor}
+                    triangle="hide"
+                    width="100%"
+                    onChangeComplete={(c) => this.hueColorChange(c)}
+                  />
+                </div>
+                ): 
+                  (<>
+                    <div className="rectDefault">
+                    </div>
+                    <div className="rectDefault">
+                    </div>
+                    <div className="rectDefault">
+                    </div>
+                    <div className="rectDefault">
+                    </div>
+                  </>)
+                }
               </div>
-              <div className="rect smallrects balances" style={{color: "#4D4D4D"}}>
-          <Balance
-            account={this.state.account}
-            pendingPixels={this.state.pendingPixels}
-            isEventOff={isEventOff}
-            detailed={true}
-          />
-                <BuyButtons watchClass={watchClass} />
+              <div className="rect smallrects balances" style={{ color: "#4D4D4D", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                <Balance
+                  account={this.state.account}
+                  pendingPixels={this.state.pendingPixels}
+                  isEventOff={isEventOff}
+                  detailed={true}
+                />
+                <Popup trigger={<button className="btnbuyink"><span style={{ fontSize: "1.3rem" }}>BUY INK</span></button>} modal>
+                  <BuyButtons watchClass={watchClass} />
+                </Popup>
               </div>
-              <div className="rect smallrects" style={{display:"flex", flexDirection:"column"}}>
-                <span style={{color:"#4D4D4D"}}>Canvas' Info</span>
+              <div className="rect smallrects" style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ color: "#4D4D4D" }}>Canvas' Info</span>
                 <div className={`leaderboard`}> {/*${watchClass}*/}
                   <div>
                     <Leaderboard
@@ -1136,11 +1149,11 @@ class App extends React.Component {
               </div>
             </div>
             <div className="rect bigrect">
-            {timeLeft}
+              {timeLeft}
               <canvas
                 ref={this.canvasRef}
-                width={550}
-                height={550}
+                width={600}
+                height={600}
                 className={
                   this.state.boardLoaded
                     ? `pixel-board${this.state.watchMode ? " watch-mode" : ""
@@ -1152,7 +1165,7 @@ class App extends React.Component {
           </div>
 
 
-      </div>
+        </div>
         <div className={`padded`}>
           {/* {this.state.signedIn ? (
             <div>
@@ -1167,48 +1180,49 @@ class App extends React.Component {
             ""
           )} */}
         </div>
-    {/*<div className={`padded${watchClass}`}>*/ }
-    {/*  <div className="video-container">*/ }
-    {/*    <iframe*/ }
-    {/*      title="youtube3"*/ }
-    {/*      className="youtube"*/ }
-    {/*      src="https://www.youtube.com/embed/wfTa-Kgw2DM"*/ }
-    {/*      frameBorder="0"*/ }
-    {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/ }
-    {/*      allowFullScreen*/ }
-    {/*    />*/ }
-    {/*  </div>*/ }
-    {/*</div>*/ }
-    {/*<div className={`padded${watchClass}`}>*/ }
-    {/*  <div className="video-container">*/ }
-    {/*    <iframe*/ }
-    {/*      title="youtube2"*/ }
-    {/*      className="youtube"*/ }
-    {/*      src="https://www.youtube.com/embed/PYF6RWd7ZgI"*/ }
-    {/*      frameBorder="0"*/ }
-    {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/ }
-    {/*      allowFullScreen*/ }
-    {/*    />*/ }
-    {/*  </div>*/ }
-    {/*</div>*/ }
-    {/*<div className={`padded${watchClass}`}>*/ }
-    {/*  <div className="video-container">*/ }
-    {/*    <iframe*/ }
-    {/*      title="youtube"*/ }
-    {/*      className="youtube"*/ }
-    {/*      src="https://www.youtube.com/embed/lMSWhCwstLo"*/ }
-    {/*      frameBorder="0"*/ }
-    {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/ }
-    {/*      allowFullScreen*/ }
-    {/*    />*/ }
-    {/*  </div>*/ }
-    {/*</div>*/ }
-    { weapons }
-       
+        {/*<div className={`padded${watchClass}`}>*/}
+        {/*  <div className="video-container">*/}
+        {/*    <iframe*/}
+        {/*      title="youtube3"*/}
+        {/*      className="youtube"*/}
+        {/*      src="https://www.youtube.com/embed/wfTa-Kgw2DM"*/}
+        {/*      frameBorder="0"*/}
+        {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/}
+        {/*      allowFullScreen*/}
+        {/*    />*/}
+        {/*  </div>*/}
+        {/*</div>*/}
+        {/*<div className={`padded${watchClass}`}>*/}
+        {/*  <div className="video-container">*/}
+        {/*    <iframe*/}
+        {/*      title="youtube2"*/}
+        {/*      className="youtube"*/}
+        {/*      src="https://www.youtube.com/embed/PYF6RWd7ZgI"*/}
+        {/*      frameBorder="0"*/}
+        {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/}
+        {/*      allowFullScreen*/}
+        {/*    />*/}
+        {/*  </div>*/}
+        {/*</div>*/}
+        {/*<div className={`padded${watchClass}`}>*/}
+        {/*  <div className="video-container">*/}
+        {/*    <iframe*/}
+        {/*      title="youtube"*/}
+        {/*      className="youtube"*/}
+        {/*      src="https://www.youtube.com/embed/lMSWhCwstLo"*/}
+        {/*      frameBorder="0"*/}
+        {/*      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"*/}
+        {/*      allowFullScreen*/}
+        {/*    />*/}
+        {/*  </div>*/}
+        {/*</div>*/}
+        {weapons}
+
       </div >
     );
   }
 }
+
 
 const Balance = (props) => {
   const account = props.account;
@@ -1242,9 +1256,9 @@ const Balance = (props) => {
       ""
     ); */
   return (
-    <span className="font-small">
+    <div style={{ alignItems: "center", justifyContent: "center" }}>
       <span className="font-weight-bold">
-        {avacadoBalance ? avacadoBalance.toFixed(fraction) : 0} INK 
+        {avacadoBalance ? avacadoBalance.toFixed(fraction) : 0} INK
       </span>
       {/* <span className="font-weight-bold">
         {account.bananaBalance ? account.bananaBalance.toFixed(fraction) : 0}
@@ -1252,7 +1266,8 @@ const Balance = (props) => {
       {avocadoFarm}
       {bananaFarm} */}
       {props.pendingPixels ? <span> ({props.pendingPixels} pending)</span> : ""}
-    </span>
+    </div>
+
   );
 };
 
@@ -1281,35 +1296,35 @@ const Leaderboard = (props) => {
 const BuyButtons = (props) => {
   return (
     <div className={`buttons${props.watchClass}`} >
-          <button
-            className="btn btn-primary"
-            onClick={() => this.buyTokens(10)}
-          >
-            Buy <span className="font-weight-bold">25Avocado</span> for{" "}
-            <span className="font-weight-bold">Ⓝ0.1</span>
-          </button>{" "}
-          <button
-            className="btn btn-primary"
-            onClick={() => this.buyTokens(40)}
-          >
-            Buy <span className="font-weight-bold">100Avocado</span> for{" "}
-            <span className="font-weight-bold">Ⓝ0.4</span>
-          </button>{" "}
-          <button
-            className="btn btn-primary"
-            onClick={() => this.buyTokens(100)}
-          >
-            Buy <span className="font-weight-bold">250Avocado</span> for{" "}
-            <span className="font-weight-bold">Ⓝ1</span>
-          </button>{" "}
-          <button
-            className="btn btn-success"
-            onClick={() => this.buyTokens(500)}
-          >
-            DEAL: Buy <span className="font-weight-bold">1500Avocado</span>{" "}
-            for <span className="font-weight-bold">Ⓝ5</span>
-          </button>
-        </div>
+      <button
+        className="btn btn-primary"
+        onClick={() => this.buyTokens(10)}
+      >
+        Buy <span className="font-weight-bold">25Avocado</span> for{" "}
+        <span className="font-weight-bold">Ⓝ0.1</span>
+      </button>{" "}
+      <button
+        className="btn btn-primary"
+        onClick={() => this.buyTokens(40)}
+      >
+        Buy <span className="font-weight-bold">100Avocado</span> for{" "}
+        <span className="font-weight-bold">Ⓝ0.4</span>
+      </button>{" "}
+      <button
+        className="btn btn-primary"
+        onClick={() => this.buyTokens(100)}
+      >
+        Buy <span className="font-weight-bold">250Avocado</span> for{" "}
+        <span className="font-weight-bold">Ⓝ1</span>
+      </button>{" "}
+      <button
+        className="btn btn-success"
+        onClick={() => this.buyTokens(500)}
+      >
+        DEAL: Buy <span className="font-weight-bold">1500Avocado</span>{" "}
+        for <span className="font-weight-bold">Ⓝ5</span>
+      </button>
+    </div>
   )
 }
 

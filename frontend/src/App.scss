@@ -49,6 +49,35 @@ h2 {
   display: inline-block;
 }
 
+.btnbuyink {
+  display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 10px 0px;
+gap: 10px;
+
+width: 201.19px;
+height: 51px;
+
+background: #5F8AFA;
+border-radius: 56px;
+
+/* Inside auto layout */
+
+flex: none;
+order: 1;
+flex-grow: 0;
+border-style: none;
+}
+
+.btnbuyink span {
+  font-family: 'ManRope SemiBold';
+  background: #5F8AFA;
+  color: #fff;
+
+}
+
 .balances {
   font-size: 2rem;
   font-weight: 600;
@@ -134,6 +163,11 @@ h2 {
   border-radius: 25px;
 }
 
+.rectDefault {
+  background: #D9D9D9;
+  border-radius: 5px;
+}
+
 .bigrect {
   width: 60%;
   margin-left: 40px;
@@ -163,7 +197,7 @@ h2 {
 }
 
 .container {
-  padding: 0px 16px;
+  padding: 0px 50px;
   display: flex;
   justify-content: center;
   flex-direction: column;
