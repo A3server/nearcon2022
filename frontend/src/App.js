@@ -7,13 +7,14 @@ import { AlphaPicker, HuePicker, GithubPicker } from "react-color";
 import Switch from "react-switch";
 import { Weapons } from "./Weapons";
 import Timer from "react-compound-timer";
+import {intToColor, intToColorWithAlpha, rgbaToInt,generateGamma,  imgColorToInt, int2hsv, transparentColor, decodeLine, BoardHeight, BoardWidth, NumLinesPerFetch, ExpectedLineLength, CellHeight, CellWidth, MaxNumColors, BatchOfPixels, BatchTimeout, RefreshBoardTimeout, MaxWorkTime, OneDayMs} from "./util/utils";
 
 const PixelPrice = new BN("10000000000000000000000");
 const IsMainnet = window.location.hostname === "berryclub.io";
 const TestNearConfig = {
   networkId: "testnet",
   nodeUrl: "https://rpc.testnet.near.org",
-  contractName: "berryclub.testnet",
+  contractName: "dev-1663027559455-27779960316569",
   walletUrl: "https://wallet.testnet.near.org",
 };
 const MainNearConfig = {
@@ -24,106 +25,10 @@ const MainNearConfig = {
 };
 const NearConfig = IsMainnet ? MainNearConfig : TestNearConfig;
 
-const Avocado = (
-  <span role="img" aria-label="avocado" className="berry">
-    🥑
-  </span>
-);
-const Banana = (
-  <span role="img" aria-label="banana" className="berry">
-    🍌
-  </span>
-);
-const Cucumber = (
-  <span role="img" aria-label="cucumber" className="berry">
-    🥒
-  </span>
-);
-const Pepper = (
-  <span role="img" aria-label="pepper" className="berry">
-    🌶️
-  </span>
-);
 
 const Berry = {
   Avocado: "Avocado",
   Banana: "Banana",
-};
-
-const BoardHeight = 50;
-const BoardWidth = 50;
-const NumLinesPerFetch = 50;
-const ExpectedLineLength = 4 + 8 * BoardWidth;
-const CellWidth = 12;
-const CellHeight = 12;
-const MaxNumColors = 31;
-const BatchOfPixels = 100;
-// 500 ms
-const BatchTimeout = 500;
-const RefreshBoardTimeout = 1000;
-const MaxWorkTime = 10 * 60 * 1000;
-const OneDayMs = 24 * 60 * 60 * 1000;
-
-const intToColor = (c) => `#${c.toString(16).padStart(6, "0")}`;
-const intToColorWithAlpha = (c, a) =>
-  `#${c.toString(16).padStart(6, "0")}${Math.round(255 * a)
-    .toString(16)
-    .padStart(2, "0")}`;
-
-const rgbaToInt = (cr, cg, cb, ca, bgColor) => {
-  const bb = bgColor & 255;
-  const bg = (bgColor >> 8) & 255;
-  const br = (bgColor >> 16) & 255;
-
-  const r = Math.round(cr * ca + br * (1 - ca));
-  const g = Math.round(cg * ca + bg * (1 - ca));
-  const b = Math.round(cb * ca + bb * (1 - ca));
-  return (r << 16) + (g << 8) + b;
-};
-
-const imgColorToInt = (c, bgColor) => {
-  const cr = c & 255;
-  const cg = (c >> 8) & 255;
-  const cb = (c >> 16) & 255;
-  const ca = ((c >> 24) & 255) / 255;
-  return rgbaToInt(cr, cg, cb, ca, bgColor);
-};
-
-const int2hsv = (cInt) => {
-  cInt = intToColor(cInt).substr(1);
-  const r = parseInt(cInt.substr(0, 2), 16) / 255;
-  const g = parseInt(cInt.substr(2, 2), 16) / 255;
-  const b = parseInt(cInt.substr(4, 2), 16) / 255;
-  let v = Math.max(r, g, b),
-    c = v - Math.min(r, g, b);
-  let h =
-    c && (v === r ? (g - b) / c : v === g ? 2 + (b - r) / c : 4 + (r - g) / c);
-  return [60 * (h < 0 ? h + 6 : h), v && c / v, v];
-};
-const transparentColor = (c, a) =>
-  `rgba(${c >> 16}, ${(c >> 8) & 0xff}, ${c & 0xff}, ${a})`;
-const generateGamma = (hue) => {
-  const gammaColors = [];
-  for (let i = 0; i < MaxNumColors; ++i) {
-    gammaColors.push(`hsl(${hue}, 100%, ${(100 * i) / (MaxNumColors - 1)}%)`);
-  }
-  return gammaColors;
-};
-const decodeLine = (line) => {
-  let buf = Buffer.from(line, "base64");
-  if (buf.length !== ExpectedLineLength) {
-    throw new Error("Unexpected encoded line length");
-  }
-  let pixels = [];
-  for (let i = 4; i < buf.length; i += 8) {
-    let color = buf.readUInt32LE(i);
-    let ownerIndex = buf.readUInt32LE(i + 4);
-    pixels.push({
-      color,
-      ownerIndex,
-    });
-  }
-  return pixels;
 };
 
 const WeaponsCheat = "idkfa";
@@ -474,11 +379,12 @@ class App extends React.Component {
     if (!this.state.signedIn || !this._lines || !this._lines[cell.y]) {
       return;
     }
-    const balance = this.state.account ? this.state.account.avocadoBalance : 0;
+    
+    //const balance = this.state.account ? this.state.account.avocadoBalance : 0;
 
     if (
-      !this._isFreeDrawing() &&
-      balance - this.state.pendingPixels < this.state.avocadoNeeded
+      !this._isFreeDrawing() /* &&
+      balance - this.state.pendingPixels < this.state.avocadoNeeded */
     ) {
       return;
     }
@@ -560,8 +466,8 @@ class App extends React.Component {
       account = {
         accountId,
         accountIndex: -1,
-        avocadoBalance: 25.0,
-        bananaBalance: 0.0,
+        /* avocadoBalance: 25.0,
+        bananaBalance: 0.0, */
         numPixels: 0,
         farmingPreference: Berry.Avocado,
       };
@@ -569,19 +475,19 @@ class App extends React.Component {
       account = {
         accountId: account.account_id,
         accountIndex: account.account_index,
-        avocadoBalance: parseFloat(account.avocado_balance) / this._pixelCost,
-        bananaBalance: parseFloat(account.banana_balance) / this._pixelCost,
+        /* avocadoBalance: parseFloat(account.avocado_balance) / this._pixelCost,
+        bananaBalance: parseFloat(account.banana_balance) / this._pixelCost, */
         numPixels: account.num_pixels,
-        farmingPreference: account.farming_preference,
+        //farmingPreference: account.farming_preference,
       };
     }
     account.startTime = new Date().getTime();
-    account.avocadoPixels =
+    /* account.avocadoPixels =
       account.farmingPreference === Berry.Avocado ? account.numPixels + 1 : 0;
     account.bananaPixels =
       account.farmingPreference === Berry.Banana ? account.numPixels : 0;
     account.avocadoRewardPerMs = account.avocadoPixels / (24 * 60 * 60 * 1000);
-    account.bananaRewardPerMs = account.bananaPixels / (24 * 60 * 60 * 1000);
+    account.bananaRewardPerMs = account.bananaPixels / (24 * 60 * 60 * 1000); */
     return account;
   }
 
@@ -610,7 +516,7 @@ class App extends React.Component {
 
     this.setState({
       pendingPixels: this._pendingPixels.length + this._queue.length,
-      farmingBanana: account.farmingPreference === Berry.Banana,
+      // farmingBanana: account.farmingPreference === Berry.Banana,
       account,
     });
 
@@ -618,9 +524,9 @@ class App extends React.Component {
       const t = new Date().getTime() - account.startTime;
       this.setState({
         account: Object.assign({}, account, {
-          avocadoBalance:
+          /* avocadoBalance:
             account.avocadoBalance + t * account.avocadoRewardPerMs,
-          bananaBalance: account.bananaBalance + t * account.bananaRewardPerMs,
+          bananaBalance: account.bananaBalance + t * account.bananaRewardPerMs, */
         }),
         pendingPixels: this._pendingPixels.length + this._queue.length,
       });
@@ -1138,9 +1044,9 @@ class App extends React.Component {
               offColor="#666"
               onColor="#666"
               uncheckedIcon={
-                <div className="switch-berry avocado">{Avocado}</div>
+                <div className="switch-berry avocado">yo</div>
               }
-              checkedIcon={<div className="switch-berry banana">{Banana}</div>}
+              checkedIcon={<div className="switch-berry banana">ban</div>}
             />
           </div>
         </div>
@@ -1149,28 +1055,28 @@ class App extends React.Component {
             className="btn btn-primary"
             onClick={() => this.buyTokens(10)}
           >
-            Buy <span className="font-weight-bold">25{Avocado}</span> for{" "}
+            Buy <span className="font-weight-bold">25Avocado</span> for{" "}
             <span className="font-weight-bold">Ⓝ0.1</span>
           </button>{" "}
           <button
             className="btn btn-primary"
             onClick={() => this.buyTokens(40)}
           >
-            Buy <span className="font-weight-bold">100{Avocado}</span> for{" "}
+            Buy <span className="font-weight-bold">100Avocado</span> for{" "}
             <span className="font-weight-bold">Ⓝ0.4</span>
           </button>{" "}
           <button
             className="btn btn-primary"
             onClick={() => this.buyTokens(100)}
           >
-            Buy <span className="font-weight-bold">250{Avocado}</span> for{" "}
+            Buy <span className="font-weight-bold">250Avocado</span> for{" "}
             <span className="font-weight-bold">Ⓝ1</span>
           </button>{" "}
           <button
             className="btn btn-success"
             onClick={() => this.buyTokens(500)}
           >
-            DEAL: Buy <span className="font-weight-bold">1500{Avocado}</span>{" "}
+            DEAL: Buy <span className="font-weight-bold">1500Avocado</span>{" "}
             for <span className="font-weight-bold">Ⓝ5</span>
           </button>
         </div>
@@ -1191,7 +1097,7 @@ class App extends React.Component {
             <span role="img" aria-label="warning">
               ⚠️
             </span>
-            ️ Please! Don't destroy art! If you just want to farm {Banana}, just
+            ️ Please! Don't destroy art! If you just want to farm banana, just
             draw with low opacity.
             <span role="img" aria-label="pray">
               🙏
@@ -1245,19 +1151,19 @@ class App extends React.Component {
       <div>
         <div className={`header${watchClass}`}>
           <h2>
-            {Avocado} Berry Club {Banana}
+            Avocado Berry Club banana
           </h2>{" "}
           <a className="btn btn-outline-none" href="https://farm.berryclub.io">
-            Berry Farm {Cucumber}
+            Berry Farm cucumber
           </a>
           <a
             className="btn btn-outline-none"
             href="https://app.ref.finance/#wrap.near|berryclub.ek.near"
           >
-            REF Finance {Banana}
+            REF Finance banana
           </a>
           <a className="btn btn-outline-none" href="https://berry.cards">
-            [BETA] Berry Cards {Pepper}
+            [BETA] Berry Cards pepper
           </a>
           {content}
         </div>
@@ -1370,7 +1276,7 @@ const Balance = (props) => {
       <span>
         {"(+"}
         <span className="font-weight-bold">{account.avocadoPixels}</span>
-        {Avocado}
+        Avocado
         {"/day)"}
       </span>
     ) : (
@@ -1381,7 +1287,7 @@ const Balance = (props) => {
       <span>
         {"(+"}
         <span className="font-weight-bold">{account.bananaPixels}</span>
-        {Banana}
+        banana
         {"/day)"}
       </span>
     ) : (
@@ -1390,13 +1296,13 @@ const Balance = (props) => {
   return (
     <span className="balances font-small">
       <span className="font-weight-bold">
-        {avacadoBalance.toFixed(fraction)}
+        {avacadoBalance ? avacadoBalance.toFixed(fraction): 0}
       </span>
-      {Avocado}{" "}
+      Avocado{" "}
       <span className="font-weight-bold">
-        {account.bananaBalance.toFixed(fraction)}
+        {account.bananaBalance ? account.bananaBalance.toFixed(fraction) : 0}
       </span>
-      {Banana} {avocadoFarm}
+      {avocadoFarm}
       {bananaFarm}
       {props.pendingPixels ? <span> ({props.pendingPixels} pending)</span> : ""}
     </span>
