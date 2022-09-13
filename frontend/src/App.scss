@@ -39,11 +39,14 @@ body {
 	height: 100vh;
 	font-family: "ManRope Medium","Exo", sans-serif;
 	color: #fff;
-	background: linear-gradient(116.82deg, rgba(174, 89, 30, 0.9) 0%, rgba(5, 52, 173, 0.55) 100%);
 	/* background-size: 400% 400%;
 	animation: gradientBG 15s ease infinite; */
 }
 
+.mainBG {
+	background: linear-gradient(116.82deg, rgba(174, 89, 30, 0.9) 0%, rgba(5, 52, 173, 0.55) 100%);
+
+}
 h2 {
   margin: 16px 0;
   display: inline-block;
