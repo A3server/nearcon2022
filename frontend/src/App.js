@@ -4,7 +4,6 @@ import React from "react";
 import BN from "bn.js";
 import * as nearAPI from "near-api-js";
 import { AlphaPicker, HuePicker, GithubPicker } from "react-color";
-import Switch from "react-switch";
 import { Weapons } from "./Weapons";
 import Timer from "react-compound-timer";
 import {intToColor, intToColorWithAlpha, rgbaToInt,generateGamma,  imgColorToInt, int2hsv, transparentColor, decodeLine, BoardHeight, BoardWidth, NumLinesPerFetch, ExpectedLineLength, CellHeight, CellWidth, MaxNumColors, BatchOfPixels, BatchTimeout, RefreshBoardTimeout, MaxWorkTime, OneDayMs} from "./util/utils";
@@ -75,10 +74,9 @@ class App extends React.Component {
     const defaultAlpha = 0.25;
 
     const timeMs = new Date().getTime();
-    const freeDrawingStartMsEstimated =
+    const eventEndEstimated =
       timeMs -
-      ((timeMs - new Date("2021-05-09")) % (7 * OneDayMs)) +
-      OneDayMs * 6;
+      ((timeMs - new Date("2022-09-14")));
 
     this.state = {
       connected: false,
@@ -100,8 +98,7 @@ class App extends React.Component {
       farmingBanana: false,
       weaponsOn: false,
       weaponsCodePosition: 0,
-      freeDrawingStart: new Date(freeDrawingStartMsEstimated),
-      freeDrawingEnd: new Date(freeDrawingStartMsEstimated + OneDayMs),
+      eventEndTime: new Date(eventEndEstimated),
       watchMode: false,
     };
 
@@ -126,8 +123,7 @@ class App extends React.Component {
           signedIn: !!this._accountId,
           accountId: this._accountId,
           ircAccountId: this._accountId.replace(".", "_"),
-          freeDrawingStart: this._freeDrawingStart,
-          freeDrawingEnd: this._freeDrawingEnd,
+          eventEndTime: this.eventEndTime,
         },
         () => {
           if (window.location.hash.indexOf("watch") >= 0) {
@@ -383,7 +379,7 @@ class App extends React.Component {
     //const balance = this.state.account ? this.state.account.avocadoBalance : 0;
 
     if (
-      !this._isFreeDrawing() /* &&
+      !this._isEventOver() /* &&
       balance - this.state.pendingPixels < this.state.avocadoNeeded */
     ) {
       return;
@@ -432,7 +428,7 @@ class App extends React.Component {
       return;
     }
     const balance = this.state.account ? this.state.account.avocadoBalance : 0;
-    if (!this._isFreeDrawing() && balance - this.state.pendingPixels < 1) {
+    if (!this._isEventOver() && balance - this.state.pendingPixels < 1) {
       return;
     }
 
@@ -561,15 +557,15 @@ class App extends React.Component {
           "get_account_balance",
           "get_account_num_pixels",
           "get_account_id_by_index",
-          "get_free_drawing_timestamp",
+          "get_event_finish",
         ],
         changeMethods: ["draw", "buy_tokens", "select_farming_preference"],
       }
     );
     this._pixelCost = parseFloat(await this._contract.get_pixel_cost());
-    const freeDrawingTimestamp = await this._contract.get_free_drawing_timestamp();
-    this._freeDrawingStart = new Date(freeDrawingTimestamp);
-    this._freeDrawingEnd = new Date(freeDrawingTimestamp + OneDayMs);
+    const endtime = await this._contract.get_event_finish();
+    //convert epox to Date object
+    this.eventEndTime = new Date(endtime/1000000) ;
     if (this._accountId) {
       await this.refreshAccountStats();
     }
@@ -944,10 +940,10 @@ class App extends React.Component {
     });
   }
 
-  _isFreeDrawing() {
+  _isEventOver() {
     const date = new Date();
     return (
-      this.state.freeDrawingStart <= date && date < this.state.freeDrawingEnd
+      this.state.EventEnd <= date
     );
   }
 
@@ -963,21 +959,20 @@ class App extends React.Component {
 
   render() {
     const watchClass = this.state.watchMode ? " hidden" : "";
-    const isFreeDrawing = this._isFreeDrawing();
+    const isEventOff = this._isEventOver();
     const freeDrawing = (
       <div
         className={`free-drawing ${
-          isFreeDrawing ? "free" : "wait"
+          isEventOff ? "free" : "wait"
         }${watchClass}`}
       >
-        {isFreeDrawing
-          ? "BANANZA!!! Draw for free "
-          : "Time until free drawing "}
-        <Timer
+        {isEventOff
+          ? "Near Playground is over! Thanks for playing!"
+          : <>
+          Time until the end off the event:
+          <Timer
           initialTime={
-            isFreeDrawing
-              ? this.state.freeDrawingEnd - new Date()
-              : this.state.freeDrawingStart - new Date()
+               this.state.eventEndTime - new Date()
           }
           direction="backward"
           timeToUpdate={100}
@@ -995,13 +990,12 @@ class App extends React.Component {
               />
               <Timer.Hours />:
               <Timer.Minutes formatValue={(v) => `${v}`.padStart(2, "0")} />:
-              <Timer.Seconds formatValue={(v) => `${v}`.padStart(2, "0")} />.
-              <Timer.Milliseconds
-                formatValue={(v) => `${v}`.padStart(3, "0")}
-              />
+              <Timer.Seconds formatValue={(v) => `${v}`.padStart(2, "0")} />
             </React.Fragment>
           )}
         </Timer>
+        </>}
+        
       </div>
     );
 
@@ -1030,25 +1024,9 @@ class App extends React.Component {
           <Balance
             account={this.state.account}
             pendingPixels={this.state.pendingPixels}
-            isFreeDrawing={isFreeDrawing}
+            isEventOff={isEventOff}
             detailed={true}
           />
-          <div>
-            Farming preference:
-            <Switch
-              onChange={(e) => this.switchBerry(e)}
-              checked={this.state.farmingBanana}
-              className="react-switch"
-              height={30}
-              width={70}
-              offColor="#666"
-              onColor="#666"
-              uncheckedIcon={
-                <div className="switch-berry avocado">yo</div>
-              }
-              checkedIcon={<div className="switch-berry banana">ban</div>}
-            />
-          </div>
         </div>
         <div className={`buttons${watchClass}`}>
           <button
@@ -1139,7 +1117,7 @@ class App extends React.Component {
       <div>
         <Weapons
           account={this.state.account}
-          isFreeDrawing={isFreeDrawing}
+          isEventOff={isEventOff}
           renderIt={(img, avocadoNeeded) => this.renderImg(img, avocadoNeeded)}
           enableWatchMode={() => this.enableWatchMode()}
         />
@@ -1198,6 +1176,7 @@ class App extends React.Component {
             </div>
           </div>
         </div>
+        {/*
         <div className={`padded${watchClass}`}>
           {this.state.signedIn ? (
             <div>
@@ -1212,6 +1191,7 @@ class App extends React.Component {
             ""
           )}
         </div>
+         */}
         {/*<div className={`padded${watchClass}`}>*/}
         {/*  <div className="video-container">*/}
         {/*    <iframe*/}
@@ -1270,7 +1250,7 @@ const Balance = (props) => {
   const fraction = props.detailed ? 3 : 1;
   const avacadoBalance =
     account.avocadoBalance -
-    (props.isFreeDrawing ? 0 : props.pendingPixels || 0);
+    (props.isEventOff ? 0 : props.pendingPixels || 0);
   const avocadoFarm =
     account.avocadoPixels > 0 ? (
       <span>

@@ -180,7 +180,7 @@ export class Weapons extends React.Component {
             className="btn btn-success btn-large"
             disabled={
               !this.props.account ||
-              (!this.props.isFreeDrawing &&
+              (!this.props.isEventOff &&
                 this.props.account.avocadoBalance < this.state.avocadoNeeded)
             }
             onClick={() =>
