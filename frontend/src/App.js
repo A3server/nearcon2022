@@ -891,14 +891,6 @@ class App extends React.Component {
     );
   }
 
-  async buyTokens(amount) {
-    const requiredBalance = PixelPrice.muln(amount);
-    await this._contract.buy_tokens(
-      {},
-      new BN("30000000000000"),
-      requiredBalance
-    );
-  }
 
   setHover(accountIndex, v) {
     if (v) {
@@ -1130,11 +1122,11 @@ class App extends React.Component {
                   detailed={true}
                 />
                 <Popup trigger={<button className="btnbuyink"><span style={{ fontSize: "1.3rem" }}>BUY INK</span></button>} modal>
-                  <BuyButtons watchClass={watchClass} />
+                  <BuyButtons watchClass={watchClass} contract={this._contract}/>
                 </Popup>
               </div>
               <div className="rect smallrects" style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ color: "#4D4D4D" }}>Canvas' Info</span>
+                <span style={{ color: "#4D4D4D", fontSize:"1.3rem" }}>Canvas' Info</span>
                 <div className={`leaderboard`}> {/*${watchClass}*/}
                   <div>
                     <Leaderboard
@@ -1294,32 +1286,41 @@ const Leaderboard = (props) => {
 };
 
 const BuyButtons = (props) => {
+  async function buyTokens(amount) {
+    const requiredBalance = PixelPrice.muln(amount);
+    await props.contract.buy_tokens(
+      {},
+      new BN("30000000000000"),
+      requiredBalance
+    );
+  }
+
   return (
-    <div className={`buttons${props.watchClass}`} >
+    <div className={`buttons${props.watchClass}`} style={{display: "flex", flexDirection: "column", justifyContent:"center", borderRadius: "15px"}} >
       <button
         className="btn btn-primary"
-        onClick={() => this.buyTokens(10)}
+        onClick={() => buyTokens(10)}
       >
         Buy <span className="font-weight-bold">25Avocado</span> for{" "}
         <span className="font-weight-bold">Ⓝ0.1</span>
       </button>{" "}
       <button
         className="btn btn-primary"
-        onClick={() => this.buyTokens(40)}
+        onClick={() => buyTokens(40)}
       >
         Buy <span className="font-weight-bold">100Avocado</span> for{" "}
         <span className="font-weight-bold">Ⓝ0.4</span>
       </button>{" "}
       <button
         className="btn btn-primary"
-        onClick={() => this.buyTokens(100)}
+        onClick={() => buyTokens(100)}
       >
         Buy <span className="font-weight-bold">250Avocado</span> for{" "}
         <span className="font-weight-bold">Ⓝ1</span>
       </button>{" "}
       <button
         className="btn btn-success"
-        onClick={() => this.buyTokens(500)}
+        onClick={() => buyTokens(500)}
       >
         DEAL: Buy <span className="font-weight-bold">1500Avocado</span>{" "}
         for <span className="font-weight-bold">Ⓝ5</span>

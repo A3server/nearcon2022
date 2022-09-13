@@ -69,6 +69,10 @@ flex: none;
 order: 1;
 flex-grow: 0;
 border-style: none;
+&:hover {
+  background: #5F8AFA;
+  opacity: 0.8;
+}
 }
 
 .btnbuyink span {
