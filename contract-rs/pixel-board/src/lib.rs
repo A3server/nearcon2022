@@ -9,6 +9,7 @@ const STORAGE_PRICE_PER_BYTE: Balance = 100_000_000_000_000_000_000;
 
 const SAFETY_BAR: Balance = 50_000000_000000_000000_000000;
 
+const EVENT_FINISH: u64 = 1663146000000000000;
 const FARM_START_TIME: u64 = 1606019138008904777;
 const REWARD_PERIOD: u64 = 60 * 1_000_000_000;
 const PORTION_OF_REWARDS: Balance = 24 * 60;
@@ -147,12 +148,7 @@ impl Place {
         }
         let mut account = self.get_mut_account(env::predecessor_account_id());
         let new_pixels = pixels.len() as u32;
-        if ms_time() < self.get_free_drawing_timestamp() {
-            let cost = account.charge(Berry::Avocado, new_pixels);
-            self.burned_balances[Berry::Avocado as usize] += cost;
-        } else {
-            account.farming_preference = Berry::Avocado;
-        }
+        assert!(env::block_timestamp()<EVENT_FINISH);
 
         let mut old_owners = self.board.set_pixels(account.account_index, &pixels);
         let replaced_pixels = old_owners.remove(&account.account_index).unwrap_or(0);
@@ -161,12 +157,9 @@ impl Place {
 
         for (account_index, num_pixels) in old_owners {
             let mut account = self.get_internal_account_by_index(account_index).unwrap();
-            self.touch(&mut account);
             account.num_pixels -= num_pixels;
             self.save_account(account);
         }
-
-        self.maybe_send_reward();
     }
 
     pub fn get_num_accounts(&self) -> u32 {
