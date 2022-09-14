@@ -1065,7 +1065,7 @@ class App extends React.Component {
               ) : <></>}
               <span>
                 <div
-                  className={this.state.alpha >= 0.75 ? "display-warning" : "hidden"}
+                  className={!this.state.loggedIn ? "hidden" :"display-warning"}
                   style={{ margin: "10px", fontSize: "1.2rem" }}
                 >
                   <span role="img" aria-label="warning">
@@ -1079,7 +1079,7 @@ class App extends React.Component {
                 </div>
               </span>
             </div>
-            <div className="row" style={{ marginTop: "1rem" }}>
+            <div className="row" style={{ marginTop: "0.5rem" }}>
               <div className="col">
                 <div className="rect smallrects">
                   {this.state.signedIn ? (
@@ -1112,7 +1112,8 @@ class App extends React.Component {
                       />
                     </div>
                   ) :
-                    (<>
+                    (
+                    <div style={{display:"flex", flexDirection: "column", justifyContent:"center", alignItems:"center"}}>
                       <div className="rectDefault">
                       </div>
                       <div className="rectDefault">
@@ -1121,7 +1122,8 @@ class App extends React.Component {
                       </div>
                       <div className="rectDefault">
                       </div>
-                    </>)
+                    </div>
+                    )
                   }
                 </div>
                 <div className="rect smallrects balances" style={{ color: "#4D4D4D", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
@@ -1222,139 +1224,10 @@ class App extends React.Component {
 
         </section>
         <section className="mainBG">
-          <div className={`header`}>
-            {/* <a className="btn btn-outline-none" href="https://farm.berryclub.io">
-          Berry Farm cucumber
-        </a>
-        <a
-          className="btn btn-outline-none"
-          href="https://app.ref.finance/#wrap.near|berryclub.ek.near"
-        >
-          REF Finance banana
-        </a>
-        <a className="btn btn-outline-none" href="https://berry.cards">
-          [BETA] Berry Cards pepper
-        </a> */}
-            {content}
-          </div>
           <div className="container">
             <MainLogo />
-            <div style={{ maxWidth: "900px", display: "flex", flexDirection: "column", alignItems: "center" }}>
-              {!this.state.signedIn ? (
-                <> <span style={{ textAlign: "center", marginTop: "20px", fontSize: "1.2rem" }}>
-                  Back in the day, when Near was only in its beginnings, one of the only things you could do on-chain was to play <a href="https://berryclub.io/">Berry Club</a>.
-                  Place your pixel and leave your mark on the Near blockchain for ever.
-                </span>
-                  <p style={{ marginTop: "20px", fontSize: "1.2rem" }}>But be careful, you only got the rest of the event!</p></>
-              ) : <></>}
-              <span>
-                <div
-                  className={this.state.alpha >= 0.75 ? "display-warning" : "hidden"}
-                  style={{ margin: "10px", fontSize: "1.2rem" }}
-                >
-                  <span role="img" aria-label="warning">
-                    ⚠️
-                  </span>
-                  ️ Please! Don't destroy art!
-                  <span role="img" aria-label="pray">
-                    🙏
-                  </span>
-                  ️
-                </div>
-              </span>
-            </div>
-            <div className="row" style={{ marginTop: "1rem" }}>
-              <div className="col">
-                <div className="rect smallrects">
-                  {this.state.signedIn ? (
-                    <div className={`color-picker`}>
-                      <HuePicker
-                        color={this.state.pickerColor}
-                        width="100%"
-                        onChange={(c) => this.hueColorChange(c)}
-                      />
-                      <AlphaPicker
-                        color={this.state.pickerColor}
-                        width="100%"
-                        onChange={(c) => this.alphaColorChange(c)}
-                      />
-                      <GithubPicker
-                        className="circle-picker"
-                        colors={this.state.gammaColors}
-                        color={this.state.pickerColor}
-                        triangle="hide"
-                        width="100%"
-                        onChangeComplete={(c) => this.changeColor(c)}
-                      />
-                      <GithubPicker
-                        className="circle-picker"
-                        colors={this.state.colors}
-                        color={this.state.pickerColor}
-                        triangle="hide"
-                        width="100%"
-                        onChangeComplete={(c) => this.hueColorChange(c)}
-                      />
-                    </div>
-                  ) :
-                    (<>
-                      <div className="rectDefault">
-                      </div>
-                      <div className="rectDefault">
-                      </div>
-                      <div className="rectDefault">
-                      </div>
-                      <div className="rectDefault">
-                      </div>
-                    </>)
-                  }
-                </div>
-                <div className="rect smallrects balances" style={{ color: "#4D4D4D", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                  <Balance
-                    account={this.state.account}
-                    pendingPixels={this.state.pendingPixels}
-                    isEventOff={isEventOff}
-                    detailed={true}
-                  />
-                  <Popup trigger={<button className="btnbuyink"><span style={{ fontSize: "1.3rem" }}>BUY INK</span></button>} modal>
-                    <BuyButtons watchClass={watchClass} contract={this._contract} />
-                  </Popup>
-                </div>
-                <div className="rect smallrects" style={{ display: "flex", flexDirection: "column" }}>
-                  <span style={{ color: "#4D4D4D", fontSize: "1.3rem" }}>Canvas' Info</span>
-                  <div className={`leaderboard`}> {/*${watchClass}*/}
-                    <div>
-                      <Leaderboard
-                        owners={this.state.owners}
-                        accounts={this.state.accounts}
-                        setHover={(accountIndex, v) => this.setHover(accountIndex, v)}
-                        selectedOwnerIndex={this.state.selectedOwnerIndex}
-                        highlightedAccountIndex={this.state.highlightedAccountIndex}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="rect bigrect">
-                {timeLeft}
-                <canvas
-                  ref={this.canvasRef}
-                  width={600}
-                  height={600}
-                  className={
-                    this.state.boardLoaded
-                      ? `pixel-board${this.state.watchMode ? " watch-mode" : ""
-                      }`
-                      : "pixel-board c-animated-background"
-                  }
-                />
-              </div>
-            </div>
-
 
           </div>
-          <div className={`padded`}>
-          </div>
-          {weapons}
 
         </section>
       </div>
