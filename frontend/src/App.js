@@ -1233,6 +1233,39 @@ class App extends React.Component {
           </div>
 
         </section>
+        <section className={"team-section"}>
+          <h1>Team</h1>
+          <ul className="cards">
+            <li className="card">
+              <img src={"./assets/santana.png"} />
+              <p>Miguel Santana</p>
+            </li>
+            <li className="card">
+              <div>
+                <h3 className="card-title">Service 2</h3>
+                <div className="card-content">
+                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab repudiandae magnam harum natus fuga et
+                    repellat in maiores.</p>
+                </div>
+              </div>
+              <div className="card-link-wrapper">
+                <a href="" className="card-link">Learn More</a>
+              </div>
+            </li>
+            <li className="card">
+              <div>
+                <h3 className="card-title">Service 3</h3>
+                <div className="card-content">
+                  <p>Phasellus ultrices lorem vel bibendum ultricies. In hendrerit nulla a ante dapibus pulvinar eu eget quam.
+                  </p>
+                </div>
+              </div>
+              <div className="card-link-wrapper">
+                <a href="" className="card-link">Learn More</a>
+              </div>
+            </li>
+          </ul>
+        </section>
       </div>
 
 
