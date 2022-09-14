@@ -12,7 +12,11 @@ import Popup from 'reactjs-popup';
 import UserIcon from "./assets/UserIcon";
 import LogoutIcon from "./assets/LogoutIcon";
 import 'reactjs-popup/dist/index.css';
-
+import santana from "./assets/santana.png";
+import edu from "./assets/edu.png";
+import lucas from "./assets/lucas.png";
+import gouveia from "./assets/gouveia.png";
+import pvaz from "./assets/pvaz.png";
 const PixelPrice = new BN("10000000000000000000000");
 const IsMainnet = window.location.hostname === "berryclub.io";
 const TestNearConfig = {
@@ -1237,35 +1241,27 @@ class App extends React.Component {
           <h1>Team</h1>
           <ul className="cards">
             <li className="card">
-              <img src={"./assets/santana.png"} />
+              <img src = {edu} className="card-image"/>
+              <p>Eduardo Nunes</p>
+            </li>
+            <li className="card">
+              <img src = {lucas} className="card-image"/>
+              <p>Lucas Anjo</p>
+            </li>
+            <li className="card">
+              <img src = {santana} className="card-image"/>
               <p>Miguel Santana</p>
             </li>
             <li className="card">
-              <div>
-                <h3 className="card-title">Service 2</h3>
-                <div className="card-content">
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab repudiandae magnam harum natus fuga et
-                    repellat in maiores.</p>
-                </div>
-              </div>
-              <div className="card-link-wrapper">
-                <a href="" className="card-link">Learn More</a>
-              </div>
+              <img src = {pvaz} className="card-image"/>
+              <p>Pedro Vaz</p>
             </li>
             <li className="card">
-              <div>
-                <h3 className="card-title">Service 3</h3>
-                <div className="card-content">
-                  <p>Phasellus ultrices lorem vel bibendum ultricies. In hendrerit nulla a ante dapibus pulvinar eu eget quam.
-                  </p>
-                </div>
-              </div>
-              <div className="card-link-wrapper">
-                <a href="" className="card-link">Learn More</a>
-              </div>
+              <img src = {gouveia} className="card-image"/>
+              <p>Vasco gouveia</p>
             </li>
           </ul>
-        </section>
+        </section> 
       </div>
 
 
