@@ -1127,12 +1127,15 @@ class App extends React.Component {
                   }
                 </div>
                 <div className="rect smallrects balances" style={{ color: "#4D4D4D", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                  <Balance
+                  {this.state.signedIn ? (
+                    <Balance
                     account={this.state.account}
                     pendingPixels={this.state.pendingPixels}
                     isEventOff={isEventOff}
                     detailed={true}
-                  />
+                  />) :  <div className="rectDefault" style={{width: "40%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
+                  </div>}
+                  
                   <Popup trigger={<button className="btnbuyink"><span style={{ fontSize: "1.3rem" }}>BUY INK</span></button>} modal>
                     <BuyButtons watchClass={watchClass} contract={this._contract} />
                   </Popup>
