@@ -455,11 +455,40 @@ h2 {
 }
 
 /********************************
-Css for team
+About us
+********************************/
+
+.about-us{
+  // height: 50vh;
+  margin: 10vh 0;
+  padding: 5vh 10vw;
+  // background-color: white;
+  background: linear-gradient(45deg, #A463B0 0%, #4FD1D9 100%);
+}
+
+.about-us-container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  // justify-items: ;
+  // padding: 5vh 0;
+  .text{
+    padding: 0 5vw 0 0;
+    text-align: center;
+    justify-self: center;
+  }
+
+  img{
+    width: 20vw;
+  }
+}
+
+/********************************
+Team
 ********************************/
 
 .team-section {
-  min-height: 50vh;
+  height: 50vh;
   margin: 10vh 5vw;
   // background-color: white;
   background: linear-gradient(116.82deg, #DB5555 0%, #E3935B 100%);

@@ -17,6 +17,8 @@ import edu from "./assets/edu.png";
 import lucas from "./assets/lucas.png";
 import gouveia from "./assets/gouveia.png";
 import pvaz from "./assets/pvaz.png";
+import polvo from "./assets/polvo.svg";
+
 const PixelPrice = new BN("10000000000000000000000");
 const IsMainnet = window.location.hostname === "berryclub.io";
 const TestNearConfig = {
@@ -1069,7 +1071,7 @@ class App extends React.Component {
               ) : <></>}
               <span>
                 <div
-                  className={!this.state.loggedIn ? "hidden" :"display-warning"}
+                  className={!this.state.loggedIn ? "hidden" : "display-warning"}
                   style={{ margin: "10px", fontSize: "1.2rem" }}
                 >
                   <span role="img" aria-label="warning">
@@ -1117,29 +1119,29 @@ class App extends React.Component {
                     </div>
                   ) :
                     (
-                    <div style={{display:"flex", flexDirection: "column", justifyContent:"center", alignItems:"center"}}>
-                      <div className="rectDefault">
+                      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                        <div className="rectDefault">
+                        </div>
+                        <div className="rectDefault">
+                        </div>
+                        <div className="rectDefault">
+                        </div>
+                        <div className="rectDefault">
+                        </div>
                       </div>
-                      <div className="rectDefault">
-                      </div>
-                      <div className="rectDefault">
-                      </div>
-                      <div className="rectDefault">
-                      </div>
-                    </div>
                     )
                   }
                 </div>
                 <div className="rect smallrects balances" style={{ color: "#4D4D4D", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                   {this.state.signedIn ? (
                     <Balance
-                    account={this.state.account}
-                    pendingPixels={this.state.pendingPixels}
-                    isEventOff={isEventOff}
-                    detailed={true}
-                  />) :  <div className="rectDefault" style={{width: "40%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
+                      account={this.state.account}
+                      pendingPixels={this.state.pendingPixels}
+                      isEventOff={isEventOff}
+                      detailed={true}
+                    />) : <div className="rectDefault" style={{ width: "40%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                   </div>}
-                  
+
                   <Popup trigger={<button className="btnbuyink"><span style={{ fontSize: "1.3rem" }}>BUY INK</span></button>} modal>
                     <BuyButtons watchClass={watchClass} contract={this._contract} />
                   </Popup>
@@ -1237,31 +1239,48 @@ class App extends React.Component {
           </div>
 
         </section>
+        <section className={"about-us"}>
+          <h1>About us</h1>
+          <div className="about-us-container">
+            <div className="text">
+              <p>
+                This project aims to revive some of the old charm  Near had in its beginning by remaking one of the first project ever made on the near blockchain (Berryclub). Our end-goal is to form a new tradition in the Near culture.
+                {"\n"}
+                {"\n"}
+                We decided to donate all the proceeds to Ukraine as we all strongly want to help them and believe that everyone in Near has the same beliefs as us, but in the future we may make a voting pool to decide to where the charitable money is going.
+                {"\n"}
+
+                Hope you enjoy our fun project and keep building on Near!
+              </p>
+            </div>
+            <img src={polvo} className="card-image" />
+          </div>
+        </section>
         <section className={"team-section"}>
           <h1>Team</h1>
           <ul className="cards">
             <li className="card">
-              <img src = {edu} className="card-image"/>
+              <img src={edu} className="card-image" />
               <p>Eduardo Nunes</p>
             </li>
             <li className="card">
-              <img src = {lucas} className="card-image"/>
+              <img src={lucas} className="card-image" />
               <p>Lucas Anjo</p>
             </li>
             <li className="card">
-              <img src = {santana} className="card-image"/>
+              <img src={santana} className="card-image" />
               <p>Miguel Santana</p>
             </li>
             <li className="card">
-              <img src = {pvaz} className="card-image"/>
+              <img src={pvaz} className="card-image" />
               <p>Pedro Vaz</p>
             </li>
             <li className="card">
-              <img src = {gouveia} className="card-image"/>
+              <img src={gouveia} className="card-image" />
               <p>Vasco gouveia</p>
             </li>
           </ul>
-        </section> 
+        </section>
       </div>
 
 
