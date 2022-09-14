@@ -18,6 +18,11 @@ import lucas from "./assets/lucas.png";
 import gouveia from "./assets/gouveia.png";
 import pvaz from "./assets/pvaz.png";
 import polvo from "./assets/polvo.svg";
+import built from "./assets/built.svg";
+import insta from "./assets/insta.svg";
+import telegram from "./assets/telegram.svg";
+import discord from "./assets/discord.svg";
+import git from "./assets/git.svg";
 
 const PixelPrice = new BN("10000000000000000000000");
 const IsMainnet = window.location.hostname === "berryclub.io";
@@ -1281,6 +1286,35 @@ class App extends React.Component {
             </li>
           </ul>
         </section>
+
+        <section className={"footer"}>
+          <div className="socials">
+            <a href="https://discord.com/" className="social">
+              <img src={discord} className="footer-image" />
+            </a>
+
+            <a href="https://github.com/" className="social">
+              <img src={git} className="footer-image" />
+            </a>
+
+            <a href="https://www.instagram.com/" className="social">
+              <img src={insta} className="footer-image" />
+            </a>
+
+            <a href="https://web.telegram.org/k/" className="social">
+              <img src={telegram} className="footer-image" />
+            </a>
+
+          </div>
+
+          <a href="https://near.org/">
+            <img src={built} className="footer-image" />
+          </a>
+
+
+
+        </section>
+
       </div>
 
 
