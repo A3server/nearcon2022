@@ -1069,8 +1069,7 @@ class App extends React.Component {
             <div style={{ maxWidth: "900px", display: "flex", flexDirection: "column", alignItems: "center" }}>
               {!this.state.signedIn ? (
                 <> <span style={{ textAlign: "center", marginTop: "20px", fontSize: "1.2rem" }}>
-                  Back in the day, when Near was only in its beginnings, one of the only things you could do on-chain was to play <a href="https://berryclub.io/">Berry Club</a>.
-                  Place your pixel and leave your mark on the Near blockchain for ever.
+                  Lennon Wall is a community project. Together, we draw on canvas and once the event is over, we mint a collectible NFT to mintbase, and auction it to support the Ukraine cause.
                 </span>
                   <p style={{ marginTop: "20px", fontSize: "1.2rem" }}>But be careful, you only got the rest of the event!</p></>
               ) : <></>}
@@ -1239,7 +1238,7 @@ class App extends React.Component {
         </section>
         <section className="mainBG">
           <div className="container">
-            <MainLogo />
+            
 
           </div>
 
@@ -1293,7 +1292,7 @@ class App extends React.Component {
               <img src={discord} className="footer-image" />
             </a>
 
-            <a href="https://github.com/" className="social">
+            <a href="https://github.com/A3server/nearcon2022" className="social">
               <img src={git} className="footer-image" />
             </a>
 
