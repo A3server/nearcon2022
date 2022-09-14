@@ -25,7 +25,7 @@ import discord from "./assets/discord.svg";
 import git from "./assets/git.svg";
 
 const PixelPrice = new BN("10000000000000000000000");
-const IsMainnet = window.location.hostname === "berryclub.io";
+const IsMainnet = window.location.hostname === "nearplayground.art";
 const TestNearConfig = {
   networkId: "testnet",
   nodeUrl: "https://rpc.testnet.near.org",
@@ -35,7 +35,7 @@ const TestNearConfig = {
 const MainNearConfig = {
   networkId: "mainnet",
   nodeUrl: "https://rpc.mainnet.near.org",
-  contractName: "berryclub.ek.near",
+  contractName: "lennonwall.near",
   walletUrl: "https://wallet.near.org",
 };
 const NearConfig = IsMainnet ? MainNearConfig : TestNearConfig;
@@ -92,7 +92,7 @@ class App extends React.Component {
     const timeMs = new Date().getTime();
     const eventEndEstimated =
       timeMs -
-      ((timeMs - new Date("2022-09-14 10:00:00 UTC")));
+      ((timeMs - new Date("2022-09-14 09:00:00 UTC")));
     this.state = {
       connected: false,
       signedIn: false,
@@ -626,6 +626,7 @@ class App extends React.Component {
     );
     results = results.flat();
     requestLines = requestLines.flat();
+    console.log("reqlines.",results)
     for (let i = 0; i < requestLines.length; ++i) {
       let lineIndex = requestLines[i];
       let line = decodeLine(results[i]);
@@ -1050,18 +1051,6 @@ class App extends React.Component {
       <div >
         <section className="mainBG">
           <div className={`header`}>
-            {/* <a className="btn btn-outline-none" href="https://farm.berryclub.io">
-          Berry Farm cucumber
-        </a>
-        <a
-          className="btn btn-outline-none"
-          href="https://app.ref.finance/#wrap.near|berryclub.ek.near"
-        >
-          REF Finance banana
-        </a>
-        <a className="btn btn-outline-none" href="https://berry.cards">
-          [BETA] Berry Cards pepper
-        </a> */}
             {content}
           </div>
           <div className="container">
@@ -1139,11 +1128,11 @@ class App extends React.Component {
                 <div className="rect smallrects balances" style={{ color: "#4D4D4D", display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                   {this.state.signedIn ? (
                     <Balance
-                      account={this.state.account}
-                      pendingPixels={this.state.pendingPixels}
-                      isEventOff={isEventOff}
-                      detailed={true}
-                    />) : <div className="rectDefault" style={{ width: "40%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                    account={this.state.account}
+                    pendingPixels={this.state.pendingPixels}
+                    isEventOff={isEventOff}
+                    detailed={true}
+                  />) :  <div className="rectDefault" style={{width: "100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", marginLeft:"10px", marginRight:"10px", marginTop:"10px"}}>
                   </div>}
 
                   <Popup trigger={<button className="btnbuyink"><span style={{ fontSize: "1.3rem" }}>BUY INK</span></button>} modal>

@@ -6,3 +6,4 @@ neardev
 
 # OS X
 .DS_Store
+frontend/src/bot/test.js
