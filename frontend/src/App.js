@@ -1071,7 +1071,7 @@ class App extends React.Component {
                 <> <span style={{ textAlign: "center", marginTop: "20px", fontSize: "1.2rem" }}>
                   Lennon Wall is a community project. Together, we draw on canvas and once the event is over, we mint a collectible NFT to mintbase, and auction it to support the Ukraine cause.
                 </span>
-                  <p style={{ marginTop: "20px", fontSize: "1.2rem" }}>Only wallets who have the Nearcon 22 proof of memory nft can participate on this event!</p></>
+                  <p style={{ marginTop: "20px", fontSize: "1.2rem" }}>Only wallets who have the "Nearcon 22 proof of memory" nft can participate on this event!</p></>
               ) : <></>}
               <span>
                 <div
