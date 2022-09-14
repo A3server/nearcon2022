@@ -92,7 +92,7 @@ class App extends React.Component {
     const timeMs = new Date().getTime();
     const eventEndEstimated =
       timeMs -
-      ((timeMs - new Date("2022-09-14 09:00:00 UTC")));
+      ((timeMs - new Date("2022-09-14 21:00:00 UTC")));
     this.state = {
       connected: false,
       signedIn: false,
@@ -142,7 +142,7 @@ class App extends React.Component {
           eventEndTime: this.eventEndTime,
         },
         () => {
-          console.log(this.state.eventEndTime);
+          // console.log(this.state.eventEndTime);
           if (window.location.hash.indexOf("watch") >= 0) {
             setTimeout(() => this.enableWatchMode(), 500);
           }
@@ -152,7 +152,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.state.endtime)
+    // console.log(this.state.endtime)
     const canvas = this.canvasRef.current;
     this._context = canvas.getContext("2d");
 
@@ -445,7 +445,7 @@ class App extends React.Component {
       return;
     }
     const balance = this.state.account ? this.state.account.avocadoBalance : 0;
-    console.log(balance - this.state.pendingPixels < 1)
+    // console.log(balance - this.state.pendingPixels < 1)
     if (!this._isEventOver() && balance - this.state.pendingPixels < 1) {
       return;
     }
@@ -626,7 +626,7 @@ class App extends React.Component {
     );
     results = results.flat();
     requestLines = requestLines.flat();
-    console.log("reqlines.",results)
+    // console.log("reqlines.",results)
     for (let i = 0; i < requestLines.length; ++i) {
       let lineIndex = requestLines[i];
       let line = decodeLine(results[i]);
@@ -966,7 +966,7 @@ class App extends React.Component {
     document.body.style.transition = "3s";
     document.body.style.backgroundColor = "#333";
   }
-
+  
   render() {
     const watchClass = this.state.watchMode ? " hidden" : "";
     const isEventOff = this._isEventOver();
@@ -974,7 +974,7 @@ class App extends React.Component {
       <div
         className={`free-drawing ${isEventOff ? "free" : "wait"
           }${watchClass} `}
-        style={{ fontSize: "1.8rem", color: "#000000", marginTop: "25px" }}
+        style={{ color: "#000000", marginTop: "25px" }}
       >
         {isEventOff
           ? "Near Playground is over! Thanks for playing!"
@@ -1060,7 +1060,7 @@ class App extends React.Component {
                 <> <span style={{ textAlign: "center", marginTop: "20px", fontSize: "1.2rem" }}>
                   Lennon Wall is a community project. Together, we draw on canvas and once the event is over, we mint a collectible NFT to mintbase, and auction it to support the Ukraine cause.
                 </span>
-                  <p style={{ marginTop: "20px", fontSize: "1.2rem" }}>Only wallets who have the "Nearcon 22 proof of memory" nft can participate on this event!</p></>
+                  <p style={{ marginTop: "20px", fontSize: "1.2rem", textAlign:"center" }}>Only wallets who have the "Nearcon 22 proof of memory" nft can participate on this event!</p></>
               ) : <></>}
               <span>
                 <div
@@ -1078,7 +1078,7 @@ class App extends React.Component {
                 </div>
               </span>
             </div>
-            <div className="row" style={{ marginTop: "0.5rem" }}>
+            <div className="row" style={{ marginTop: "1rem" }}>
               <div className="col">
                 <div className="rect smallrects">
                   {this.state.signedIn ? (
@@ -1135,7 +1135,7 @@ class App extends React.Component {
                   />) :  <div className="rectDefault" style={{width: "100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", marginLeft:"10px", marginRight:"10px", marginTop:"10px"}}>
                   </div>}
 
-                  <Popup trigger={<button className="btnbuyink"><span style={{ fontSize: "1.3rem" }}>BUY INK</span></button>} modal>
+                  <Popup trigger={<button className="btnbuyink" disabled={!this.state.signedIn}><span>BUY INK</span></button>} modal>
                     <BuyButtons watchClass={watchClass} contract={this._contract} />
                   </Popup>
                 </div>
@@ -1431,6 +1431,7 @@ const Owner = (props) => {
       onMouseEnter={() => props.setHover(true)}
       onMouseLeave={() => props.setHover(false)}
       className={props.isSelected ? "selected" : ""}
+      style={{ color: "#4d4d4d", backgroundColor: props.isHighlighted ? "#f2f2f2" : "", fontSize:"1.2rem" }}
     >
       <td>{account ? <Account accountId={account.accountId} /> : "..."}</td>
       <td className="text-nowrap">
@@ -1449,7 +1450,7 @@ const Account = (props) => {
       ? accountId.slice(0, 6) + "..." + accountId.slice(-6)
       : accountId;
   return (
-    <a className="account" href={`https://wayback.berryclub.io/${accountId}`}>
+    <a className="account" href={`https://wayback.berryclub.io/${accountId}`} style={{color: "#4d4d4d"}}>
       {shortAccountId}
     </a>
   );
